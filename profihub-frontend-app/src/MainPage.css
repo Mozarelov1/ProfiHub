@@ -1,0 +1,165 @@
+body, h1, h2, h3, p, ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  line-height: 1.6;
+  color: #000; 
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.main-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background-color: #ddd;  
+  color: #000;             
+  padding: 1rem 0;
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+.header nav ul {
+  list-style: none;
+  display: flex;
+}
+
+.header nav ul li {
+  margin-left: 1rem;
+}
+
+.header nav ul li a {
+  color: #ffffff; 
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.header nav ul li a:hover {
+  color: #555;
+}
+
+
+.hero {
+  color: #000;  
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.hero h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.hero .btn {
+  background-color: #333;
+  color: #fff;  
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.hero .btn:hover {
+  background-color: #335;
+}
+
+
+.services {
+  padding: 2rem 0;
+  background-color: #fff;
+}
+
+.services h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.service-card {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  flex: 1 1 300px;
+  text-align: center;
+}
+
+.service-image {
+  width: 300px;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  min-width: 300px;
+}
+
+.about {
+  padding: 2rem 0;
+  background-color: #f4f4f4;
+  text-align: center;
+}
+
+/* Footer */
+.footer {
+  background-color: #ddd;  
+  color: #000;             
+  padding: 1rem 0;
+  text-align: center;
+  margin-top: auto;
+}
+
+.btn {
+  background-color: #ff5a5f;
+  color: #fff;  
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  border-radius: 15px;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #e14b4f;
+}
+
+
+.login-btn {
+  background-color: #333; 
+  margin-right: 1rem;
+  color: #f4f4f4;            
+}
+
+.login-btn:hover {
+  background-color: #335;
+  color: #fff;            
+}
