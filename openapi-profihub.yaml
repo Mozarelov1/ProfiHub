@@ -1,0 +1,581 @@
+openapi: 3.0.3
+info:
+  title: ProfiHub
+  version: 1.0.0
+  description: |
+    Comprehensive API for user authentication and management, including registration, login, logout, account activation, token refresh, post CRUD operations, and user profile management.
+servers:
+  - url: http://localhost:2000/api
+    description: Local development server
+paths:
+  /auth/registration:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationRequest'
+      responses:
+        '200':
+          description: Successful registration returns user data and tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Validation error or registration failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/login:
+    post:
+      summary: Log in a user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login returns user data and tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/logout:
+    post:
+      summary: Log out a user
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Successful logout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+  /auth/activate/{activationLink}:
+    get:
+      summary: Activate user account via link
+      tags:
+        - Authentication
+      parameters:
+        - in: path
+          name: activationLink
+          schema:
+            type: string
+          required: true
+          description: Unique activation link
+      responses:
+        '302':
+          description: Redirect to client confirmation page
+        '400':
+          description: Invalid or expired activation link
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /auth/refresh:
+    get:
+      summary: Refresh access token
+      tags:
+        - Authentication
+      responses:
+        '200':
+          description: Returns new tokens and user data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: Invalid or missing token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /catalog/create-post:
+    post:
+      summary: Create a new post
+      tags:
+        - Posts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePostRequest'
+      responses:
+        '200':
+          description: Post created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /catalog/watch/{link}:
+    get:
+      summary: Get a post by link
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: link
+          schema:
+            type: string
+          required: true
+          description: Unique post identifier
+      responses:
+        '200':
+          description: Returns post data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /catalog/delete-post/{link}:
+    delete:
+      summary: Delete a post
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: link
+          schema:
+            type: string
+          required: true
+          description: Unique post identifier
+      responses:
+        '200':
+          description: Post deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeletePostResponse'
+        '401':
+          description: Unauthorized or insufficient rights
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /catalog/posts-by-category/{category}:
+    get:
+      summary: Get posts by category
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: category
+          schema:
+            type: string
+          required: true
+          description: Category name
+      responses:
+        '200':
+          description: Returns list of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+  /catalog/all-posts:
+    get:
+      summary: Get all posts
+      tags:
+        - Posts
+      responses:
+        '200':
+          description: Returns list of all posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+  /acc-mgmt/view-profile/{link}:
+    get:
+      summary: View another user's profile by link
+      tags:
+        - Profile
+      parameters:
+        - in: path
+          name: link
+          schema:
+            type: string
+          required: true
+          description: Unique profile identifier
+      responses:
+        '200':
+          description: Returns user profile data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /acc-mgmt/view-my-profile:
+    get:
+      summary: View own profile
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Returns own profile data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /acc-mgmt/settings/avatar:
+    patch:
+      summary: Upload or change avatar
+      tags:
+        - Profile
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: URL of the new avatar
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvatarResponse'
+        '400':
+          description: Image not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete avatar
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Avatar reset to default
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvatarResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /acc-mgmt/settings/update-bio:
+    patch:
+      summary: Update user biography
+      tags:
+        - Profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BioRequest'
+      responses:
+        '200':
+          description: Returns updated biography
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BioResponse'
+        '400':
+          description: Biography not provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /acc-mgmt/settings/password:
+    patch:
+      summary: Reset user password
+      tags:
+        - Profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordRequest'
+      responses:
+        '200':
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordResponse'
+        '401':
+          description: Unauthorized or invalid current password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /acc-mgmt/settings/delete-profile:
+    delete:
+      summary: Delete user profile
+      tags:
+        - Profile
+      responses:
+        '200':
+          description: Profile deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteProfileResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /acc-mgmt/settings/status:
+    patch:
+      summary: Change user status
+      tags:
+        - Profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StatusRequest'
+      responses:
+        '200':
+          description: Returns updated status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    RegistrationRequest:
+      type: object
+      required: [email, password, login]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+          maxLength: 17
+        login:
+          type: string
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    UserResponse:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+              format: email
+            login:
+              type: string
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    LogoutResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    CreatePostRequest:
+      type: object
+      required: [title, experience, category, description, salary]
+      properties:
+        title:
+          type: string
+        experience:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        salary:
+          type: number
+          format: float
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        experience:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        salary:
+          type: number
+          format: float
+        authorId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    DeletePostResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        login:
+          type: string
+        bio:
+          type: string
+        status:
+          type: string
+        avatarUrl:
+          type: string
+          format: uri-reference
+    AvatarResponse:
+      type: object
+      properties:
+        userAvatar:
+          type: string
+          format: uri-reference
+    BioRequest:
+      type: object
+      required: [bio]
+      properties:
+        bio:
+          type: string
+    BioResponse:
+      type: object
+      properties:
+        bio:
+          type: string
+    PasswordRequest:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+          minLength: 8
+          maxLength: 17
+    PasswordResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    DeleteProfileResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    StatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+    StatusResponse:
+      type: object
+      properties:
+        status:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              param:
+                type: string
+              msg:
+                type: string
+              value:
+                type: string
