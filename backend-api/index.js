@@ -23,10 +23,9 @@ app.use(cors({
 }));
 
 app.use('/api/auth',authRouter);
-app.use('/api/catalog',catalogRouter);
-app.use('/api/acc-mgmt',accMgmtRouter)
+app.use('/api/catalog',authMiddleware,catalogRouter);
+app.use('/api/acc-mgmt',authMiddleware,accMgmtRouter)
 
-app.use(authMiddleware);
 app.use(errorMiddleware);
 
 
